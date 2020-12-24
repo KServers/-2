@@ -1,0 +1,173 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>
+               単据編号:<input type="text" name="billno" id="billno" />
+
+            </td>
+            <td>
+                単据日期:<input type="text" name="billdate" id="billdate" />
+
+            </td>
+         </tr>
+         <tr>
+            <td>
+                供虚商:<input type="text" name="suppliername" id="suppliername" />
+
+            </td>
+            <td>
+                供虚商地址:<input type="text" name="supplieraddress" id="supplieraddress" />
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                部冂:<input type="text" name="department" id="department" />
+            </td>
+            <td>
+               合庠: <input type="text" name="warehouse" id="warehouse" />
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                采鈎人員:<input type="text" name= "buyer" id="buyer" />
+            </td>
+            <td>
+                制単人員:<input type="text" name="executor" id="executor" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                入库明细:
+                
+                <div id="detai" style="border:1px solid red;height:200px;width:600px;">
+                            
+                     </div>
+                
+                
+                @*<input name="detai" type="text" style="height:200px;width:600px;" />*@
+
+            </td>
+
+        </tr>
+
+        </table>
+
+    <div style="width:600px;margin:0px auto;">
+        <input type="button" value="加载测试数据" id="ceshi" />
+        <input type="button" value="加载服务器端数据" onclick="GetOne()" id="next" />
+        <input type="submit" value="保存" id="" onclick="Add()" />
+        <input type="button" value="清空" id="qk" />
+    </div>
+
+    <script src="~/js/jquery-1.8.3.js"></script>
+    <script>
+        var pc = 0;
+
+        $("#ceshi").click(function () {
+            pc = 0;
+            var jsondata = {
+                "billno": "12301",
+                "billdate": "2016-6-12",
+                "suppliername" : "株洲联想总代理",
+                "supplieraddress" : "株洲天元区黄山路",
+                "department" : "物控部",
+                "warehouse" : "株洲仓",
+                "buyer" : "蛐蛐",
+                "executor" : "小牛",
+                "datalist":[{
+                    "qbillno" : "12301",
+                    "qlineid" : 1,
+                    "qgoodsname" : "联想笔记本",
+                    "qgoodsnum" :10,
+                    "qgoodsprice" : 1000,
+                    "qgoodsmoneyamt" : 10000,
+                    "qispresent" : 1
+                }]
+            }
+
+            $("[name=billno]").val(jsondata.billno);
+            $("[name=billdate]").val(jsondata.billdate);
+            $("[name=suppliername]").val(jsondata.suppliername);
+            $("[name=supplieraddress]").val(jsondata.supplieraddress);
+            $("[name=department]").val(jsondata.department);
+            $("[name=warehouse]").val(jsondata.warehouse);
+            $("[name=buyer]").val(jsondata.buyer);
+            $("[name=executor]").val(jsondata.executor);
+            $("#detai").html(JSON.stringify(jsondata.datalist))
+
+
+        })
+
+        $(function () {
+            GetOne(pc)
+
+            $("#next").click(function () {
+                  pc++;
+                GetOne(pc);
+             })
+
+        })
+        
+
+        function GetOne() {
+
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                data: "pc=" + pc + "",
+                url: "/bill/FWQ",
+                success: function (mc) {
+                    //alert(pc);
+                    $("#detai").empty();
+                    var a = mc[0];
+
+                    $("#billno").val(a.billno);
+                    $("#billdate").val(a.billdate);
+                    $("#suppliername").val(a.suppliername);
+                    $("#supplieraddress").val(a.supplieraddress);
+                    $("#department").val(a.department);
+                    $("#warehouse").val(a.warehouse);
+                    $("#buyer").val(a.buyer);
+                    $("#executor").val(a.executor);
+                    $("#detai").html(JSON.stringify(a[0].datalist))
+                },
+                error: function (xhr) {
+                    alert(9);
+                    alert(xhr.responseText);
+                }
+            })
+        }
+
+        $("#qk").click(function () {
+            $("[name=billno]").empty();
+            $("[name=billdate]").empty();
+            $("[name=suppliername]").empty();
+            $("[name=supplieraddress]").empty();
+            $("[name=department]").empty();
+            $("[name=warehouse]").empty();
+            $("[name=buyer]").empty();
+            $("[name=executor]").empty();
+            $("#detai").empty();
+        })
+
+        function Add() {
+
+        }
+
+
+    </script>
+</body>
+</html>
